@@ -25,7 +25,12 @@ make_capture(Board, COORD1, [COORD2 | COORDS], Player, NewBoard) :-
   is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, Player, FromPiece, CaptureRow, CaptureColumn),
   replace_position(Board, FromRow, FromColumn, e, NewBoardAux),
   replace_position(NewBoardAux, CaptureRow, CaptureColumn, e, NewBoardAux2),
-  replace_position(NewBoardAux2, ToRow, ToColumn, FromPiece, NewBoardUpdated),
+  ((is_empty_list(COORDS), is_promotion(FromPiece, ToRow)) -> (
+      promotion_piece(FromPiece, PromotionPiece),
+      replace_position(NewBoardAux2, ToRow, ToColumn, PromotionPiece, NewBoardUpdated)
+    )
+    ; replace_position(NewBoardAux2, ToRow, ToColumn, FromPiece, NewBoardUpdated)
+  ),
   make_capture(NewBoardUpdated, COORD2, COORDS, Player, NewBoard).
 
 
@@ -62,3 +67,6 @@ is_valid_capture_row_normal_piece(FromRow, ToRow) :- ToRow =:= FromRow + 2.
 
 is_valid_capture_column_normal_piece(FromColumn, ToColumn) :- ToColumn =:= FromColumn - 2.
 is_valid_capture_column_normal_piece(FromColumn, ToColumn) :- ToColumn =:= FromColumn + 2.
+
+
+is_empty_list([]).

@@ -7,7 +7,8 @@
   replace_position/5,
   get_piece_at_position/4,
   promotion_piece/2,
-  is_inside_boundaries/2
+  is_inside_boundaries/2,
+  is_promotion/2
 ]).
 
 :- dynamic(board/1).
@@ -67,7 +68,7 @@ initialize_board :-
 
 initial_board([
   [e, e, e, e, e, e, e, e],
-  [e, e, e, e, e, e, e, e],
+  [e, e, e, e, b, e, e, e],
   [e, e, e, r, e, e, e, e],
   [e, e, b, e, e, e, e, e],
   [e, e, e, r, e, r, e, e],
@@ -152,6 +153,10 @@ get_piece_at_position([_ | T], Row, Column, Piece) :-
   Row > 0,
   Row1 is Row - 1,
   get_piece_at_position(T, Row1, Column, Piece).
+
+
+is_promotion(r, ToRow) :- ToRow =:= 0.
+is_promotion(b, ToRow) :- ToRow =:= 7.
 
 
 column_to_index(a, 0).

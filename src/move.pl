@@ -32,10 +32,6 @@ make_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, NewBoard) :-
   ).
 
 
-is_promotion(r, ToRow) :- ToRow =:= 0.
-is_promotion(b, ToRow) :- ToRow =:= 7.
-
-
 is_valid_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, FromPiece) :-
   FromRow =\= ToRow,
   FromColumn =\= ToColumn,

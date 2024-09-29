@@ -4,7 +4,8 @@
   display_board/0,
   coord_to_position/3,
   replace_position/5,
-  get_piece_at_position/4
+  get_piece_at_position/4,
+  promotion_piece/2
 ]).
 
 :- dynamic(board/1).
@@ -17,22 +18,50 @@ piece(bq).
 piece(e).
 
 
+promotion_piece(r, rq).
+promotion_piece(b, bq).
+
+
 initialize_board :-
   initial_board(Board),
   retractall(board(_)),
   assertz(board(Board)).
 
 
+% initial_board([
+%   [e, b, e, b, e, b, e, b],
+%   [b, e, b, e, b, e, b, e],
+%   [e, b, e, b, e, b, e, b],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [r, e, r, e, r, e, r, e],
+%   [e, r, e, r, e, r, e, r],
+%   [r, e, r, e, r, e, r, e]
+% ]).
+
+% initial_board([
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, rq, e, e, e, e, e],
+%   [e, e, e, e, e, bq, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e]
+% ]).
+
+
 initial_board([
-  [e, b, e, b, e, b, e, b],
-  [b, e, b, e, b, e, b, e],
-  [e, b, e, b, e, b, e, b],
   [e, e, e, e, e, e, e, e],
   [e, e, e, e, e, e, e, e],
-  [r, e, r, e, r, e, r, e],
-  [e, r, e, r, e, r, e, r],
-  [r, e, r, e, r, e, r, e]
+  [e, e, e, r, e, e, e, e],
+  [e, e, rq, e, e, e, e, e],
+  [e, e, e, e, e, bq, e, e],
+  [e, e, e, e, b, e, e, e],
+  [e, e, e, e, e, e, e, e],
+  [e, e, e, e, e, e, e, e]
 ]).
+
 
 
 display_board() :-

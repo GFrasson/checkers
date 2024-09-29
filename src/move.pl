@@ -1,4 +1,7 @@
-:- module(move, [mv/2]).
+:- module(move, [
+  mv/2,
+  display_game_state/0
+]).
 
 :- use_module(game_board).
 :- use_module(player).
@@ -11,19 +14,39 @@ mv(COORD1, COORD2) :-
   coord_to_position(COORD2, Row2, Column2),
   make_move(Board, Row1, Column1, Row2, Column2, Player, NewBoard),
   retract(board(Board)),
-  assertz(board(NewBoard)).
+  assertz(board(NewBoard)),
+  update_state().
 
 
 make_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, NewBoard) :-
   get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
   is_valid_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, FromPiece),
   replace_position(Board, FromRow, FromColumn, e, NewBoardAux),
-  replace_position(NewBoardAux, ToRow, ToColumn, FromPiece, NewBoard).
+  (is_promotion(FromPiece, ToRow) -> (
+      promotion_piece(FromPiece, PromotionPiece),
+      replace_position(NewBoardAux, ToRow, ToColumn, PromotionPiece, NewBoard)
+    )
+    ; replace_position(NewBoardAux, ToRow, ToColumn, FromPiece, NewBoard)
+  ).
+
+
+is_promotion(r, ToRow) :- ToRow =:= 0.
+is_promotion(b, ToRow) :- ToRow =:= 7.
+
+
+is_inside_boundaries(ToRow, ToColumn) :-
+  ToRow >= 0,
+  ToRow =< 7,
+  ToColumn >= 0,
+  ToColumn =< 7.
 
 
 is_valid_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, FromPiece) :-
+  FromRow =\= ToRow,
+  FromColumn =\= ToColumn,
+  is_inside_boundaries(ToRow, ToColumn),
   get_piece_at_position(Board, ToRow, ToColumn, ToPiece),
-  ToPiece =:= e,
+  ToPiece == e,
   player_has_piece(Player, FromPiece),
   is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, FromPiece).
 
@@ -39,6 +62,7 @@ is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, rq) :-
 
 is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, bq) :-
   is_valid_move_queen(FromRow, FromColumn, ToRow, ToColumn).
+
 
 is_valid_move_red(FromRow, FromColumn, ToRow, ToColumn) :-
   ToRow =:= FromRow - 1,
@@ -61,7 +85,42 @@ is_valid_move_blue(FromRow, FromColumn, ToRow, ToColumn) :-
 is_valid_move_queen(FromRow, FromColumn, ToRow, ToColumn) :-
   X is abs(ToRow - FromRow),
   Y is abs(ToColumn - FromColumn),
-  X =:= Y.
+  X =:= Y,
+  get_next_index_on_same_direction(FromRow, ToRow, NextRow),
+  get_next_index_on_same_direction(FromColumn, ToColumn, NextColumn),
+  is_path_free(NextRow, NextColumn, ToRow, ToColumn).
 
+
+is_path_free(FromRow, FromColumn, FromRow, FromColumn) :-
+  board(Board),
+  get_piece_at_position(Board, FromRow, FromColumn, Piece),
+  Piece == e.
+
+is_path_free(FromRow, FromColumn, ToRow, ToColumn) :-
+  board(Board),
+  get_piece_at_position(Board, FromRow, FromColumn, Piece),
+  Piece == e,
+  get_next_index_on_same_direction(FromRow, ToRow, NextRow),
+  get_next_index_on_same_direction(FromColumn, ToColumn, NextColumn),
+  is_path_free(NextRow, NextColumn, ToRow, ToColumn).
+
+
+get_next_index_on_same_direction(From, To, Next) :-
+  (To > From -> Next is From + 1 ; Next is From - 1).
+  
 
 % cap(COORD1, [COORD2 | COORDS]).
+
+display_game_state() :-
+  current_player(Player),
+  write('Jogador atual: '),
+  write(Player),
+  write('\n'),
+  display_board().
+
+
+update_state() :-
+  change_current_player(),
+  display_game_state(),
+  write('Digite a sua ação: '),
+  write('\n').

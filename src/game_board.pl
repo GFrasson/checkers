@@ -10,6 +10,13 @@
 :- dynamic(board/1).
 
 
+piece(r).
+piece(b).
+piece(rq).
+piece(bq).
+piece(e).
+
+
 initialize_board :-
   initial_board(Board),
   retractall(board(_)),
@@ -22,22 +29,48 @@ initial_board([
   [e, b, e, b, e, b, e, b],
   [e, e, e, e, e, e, e, e],
   [e, e, e, e, e, e, e, e],
-  [w, e, w, e, w, e, w, e],
-  [e, w, e, w, e, w, e, w],
-  [w, e, w, e, w, e, w, e]
+  [r, e, r, e, r, e, r, e],
+  [e, r, e, r, e, r, e, r],
+  [r, e, r, e, r, e, r, e]
 ]).
 
 
 display_board() :-
   board(Board),
-  display_matrix(Board).
+  display_board_matrix(Board, 0).
 
 
-display_matrix([]).
-display_matrix([H | T]) :-
-  write(H),
+display_board_matrix([], _).
+display_board_matrix([H | T], Index) :-
+  display_board_row(H, Index),
   write('\n'),
-  display_matrix(T).
+  NextIndex is Index + 1,
+  display_board_matrix(T, NextIndex).
+
+
+display_board_row([], _).
+display_board_row([H | T], Index) :-
+  piece(H),
+  get_display_background(Index, Background),
+  display_piece(H, Background),
+  NextIndex is Index + 1,
+  display_board_row(T, NextIndex).
+
+
+display_piece(b, Background) :- ansi_format([fg(cyan), Background], ' O ', []).
+display_piece(r, Background) :- ansi_format([fg(red), Background], ' O ', []).
+display_piece(bq, Background) :- ansi_format([underline, bold, fg(cyan), Background], ' O ', []).
+display_piece(rq, Background) :- ansi_format([underline, bold, fg(red), Background], ' O ', []).
+display_piece(e, Background) :- ansi_format([Background], '   ', []).
+
+
+get_display_background(Index, Background) :-
+  Index mod 2 =:= 0,
+  Background = bg(white).
+
+get_display_background(Index, Background) :-
+  Index mod 2 =\= 0,
+  Background = bg(black).
 
 
 % replace_position(List, Position, Value, NewList)

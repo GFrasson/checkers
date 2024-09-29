@@ -2,10 +2,12 @@
   board/1,
   initialize_board/0,
   display_board/0,
+  display_board/1,
   coord_to_position/3,
   replace_position/5,
   get_piece_at_position/4,
-  promotion_piece/2
+  promotion_piece/2,
+  is_inside_boundaries/2
 ]).
 
 :- dynamic(board/1).
@@ -51,17 +53,40 @@ initialize_board :-
 % ]).
 
 
+% initial_board([
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, r, e, e, e, e],
+%   [e, e, rq, e, e, e, e, e],
+%   [e, e, e, e, e, bq, e, e],
+%   [e, e, e, e, b, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e]
+% ]).
+
+
 initial_board([
   [e, e, e, e, e, e, e, e],
   [e, e, e, e, e, e, e, e],
   [e, e, e, r, e, e, e, e],
-  [e, e, rq, e, e, e, e, e],
-  [e, e, e, e, e, bq, e, e],
-  [e, e, e, e, b, e, e, e],
+  [e, e, b, e, e, e, e, e],
+  [e, e, e, r, e, r, e, e],
+  [e, e, e, e, b, e, b, e],
   [e, e, e, e, e, e, e, e],
   [e, e, e, e, e, e, e, e]
 ]).
 
+
+is_inside_boundaries(Row, Column) :-
+  Row >= 0,
+  Row =< 7,
+  Column >= 0,
+  Column =< 7.
+
+
+display_board(Board) :-
+  display_board_matrix(Board, 0),
+  write('   A  B  C  D  E  F  G  H \n').
 
 display_board() :-
   board(Board),

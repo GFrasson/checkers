@@ -1,6 +1,7 @@
 :- use_module(game_board).
 :- use_module(player).
 :- use_module(move).
+:- use_module(capture).
 
 
 choose_initial_player(Player) :-

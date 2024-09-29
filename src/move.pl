@@ -1,6 +1,8 @@
 :- module(move, [
   mv/2,
-  display_game_state/0
+  display_game_state/0,
+  get_next_index_on_same_direction/3,
+  update_state/0
 ]).
 
 :- use_module(game_board).
@@ -32,13 +34,6 @@ make_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, NewBoard) :-
 
 is_promotion(r, ToRow) :- ToRow =:= 0.
 is_promotion(b, ToRow) :- ToRow =:= 7.
-
-
-is_inside_boundaries(ToRow, ToColumn) :-
-  ToRow >= 0,
-  ToRow =< 7,
-  ToColumn >= 0,
-  ToColumn =< 7.
 
 
 is_valid_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, FromPiece) :-

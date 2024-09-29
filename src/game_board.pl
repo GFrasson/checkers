@@ -63,14 +63,17 @@ initial_board([
 ]).
 
 
-
 display_board() :-
   board(Board),
-  display_board_matrix(Board, 0).
+  display_board_matrix(Board, 0),
+  write('   A  B  C  D  E  F  G  H \n').
 
 
 display_board_matrix([], _).
 display_board_matrix([H | T], Index) :-
+  Coordinate is 8 - Index,
+  write(Coordinate),
+  write(' '),
   display_board_row(H, Index),
   write('\n'),
   NextIndex is Index + 1,

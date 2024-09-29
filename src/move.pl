@@ -109,8 +109,6 @@ get_next_index_on_same_direction(From, To, Next) :-
   (To > From -> Next is From + 1 ; Next is From - 1).
   
 
-% cap(COORD1, [COORD2 | COORDS]).
-
 display_game_state() :-
   current_player(Player),
   write('Jogador atual: '),

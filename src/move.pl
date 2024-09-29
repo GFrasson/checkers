@@ -15,20 +15,30 @@ mv(COORD1, COORD2) :-
 
 
 make_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, NewBoard) :-
-  get_piece_at_position(Board, FromRow, FromColumn, Piece),
-  is_valid_move(FromRow, FromColumn, ToRow, ToColumn, Piece, Player),
+  get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
+  is_valid_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, FromPiece),
   replace_position(Board, FromRow, FromColumn, e, NewBoardAux),
-  replace_position(NewBoardAux, ToRow, ToColumn, Piece, NewBoard).
+  replace_position(NewBoardAux, ToRow, ToColumn, FromPiece, NewBoard).
 
 
-is_valid_move(FromRow, FromColumn, ToRow, ToColumn, r, Player) :-
-  player_has_piece(Player, r),
+is_valid_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, FromPiece) :-
+  get_piece_at_position(Board, ToRow, ToColumn, ToPiece),
+  ToPiece =:= e,
+  player_has_piece(Player, FromPiece),
+  is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, FromPiece).
+
+
+is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, r) :-
   is_valid_move_red(FromRow, FromColumn, ToRow, ToColumn).
 
-is_valid_move(FromRow, FromColumn, ToRow, ToColumn, b, Player) :-
-  player_has_piece(Player, b),
+is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, b) :-
   is_valid_move_blue(FromRow, FromColumn, ToRow, ToColumn).
 
+is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, rq) :-
+  is_valid_move_queen(FromRow, FromColumn, ToRow, ToColumn).
+
+is_valid_move_for_piece(FromRow, FromColumn, ToRow, ToColumn, bq) :-
+  is_valid_move_queen(FromRow, FromColumn, ToRow, ToColumn).
 
 is_valid_move_red(FromRow, FromColumn, ToRow, ToColumn) :-
   ToRow =:= FromRow - 1,
@@ -46,6 +56,12 @@ is_valid_move_blue(FromRow, FromColumn, ToRow, ToColumn) :-
 is_valid_move_blue(FromRow, FromColumn, ToRow, ToColumn) :-
   ToRow =:= FromRow + 1,
   ToColumn =:= FromColumn + 1.
+
+
+is_valid_move_queen(FromRow, FromColumn, ToRow, ToColumn) :-
+  X is abs(ToRow - FromRow),
+  Y is abs(ToColumn - FromColumn),
+  X =:= Y.
 
 
 % cap(COORD1, [COORD2 | COORDS]).

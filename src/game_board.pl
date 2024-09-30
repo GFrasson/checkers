@@ -71,7 +71,7 @@ initial_board([
   [e, e, e, e, b, e, e, e],
   [e, e, e, r, e, e, e, e],
   [e, e, b, e, e, e, e, e],
-  [e, e, e, r, e, r, e, e],
+  [e, r, e, r, e, r, e, e],
   [e, e, e, e, b, e, b, e],
   [e, e, e, e, e, e, e, e],
   [e, e, e, e, e, e, e, e]

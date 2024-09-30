@@ -1,6 +1,5 @@
 :- module(capture, [
-  cap/2,
-  longest_capture_sequence/3
+  cap/2
 ]).
 
 :- use_module(game_board).
@@ -11,6 +10,10 @@
 cap(_, []).
 cap(COORD1, [COORD2 | COORDS]) :-
   board(Board),
+  longest_capture_sequence(COORD1, LongestSequence),
+  length(LongestSequence, LengthLongestSequence),
+  length([COORD2 | COORDS], LengthCapture),
+  LengthCapture =:= LengthLongestSequence,
   make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
   retractall(board(_)),
   assertz(board(NewBoard)),
@@ -85,25 +88,24 @@ is_valid_capture_column_normal_piece(FromColumn, ToColumn) :- ToColumn =:= FromC
 is_empty_list([]).
 
 
-% Predicate to find the longest capture sequence
-longest_capture_sequence(FromRow, FromColumn, Sequence) :-
+longest_capture_sequence(FromCoord, Sequence) :-
+  coord_to_position(FromCoord, FromRow, FromColumn),
   board(Board),
   get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
   findall(Captures, capture_sequence(Board, [FromRow, FromColumn], FromPiece, [], Captures), AllSequences),
   max_sequence(AllSequences, Sequence).
 
-% Base case: no more captures possible
+
 capture_sequence(Board, PiecePos, FromPiece, CurrentSequence, CurrentSequence) :-
   \+ can_capture(Board, PiecePos, FromPiece, _).
 
-% Recursive case: perform capture and continue searching for more captures
-capture_sequence(Board, PiecePos, FromPiece, CurrentSequence, FinalSequence) :-
-  can_capture(Board, PiecePos, FromPiece, NewPos),
-  make_single_capture(Board, PiecePos, NewPos, [], NewBoard),
-  capture_sequence(NewBoard, NewPos, FromPiece, [NewPos|CurrentSequence], FinalSequence).
+capture_sequence(Board, PiecePosition, FromPiece, CurrentSequence, FinalSequence) :-
+  can_capture(Board, PiecePosition, FromPiece, NewPosition),
+  make_single_capture(Board, PiecePosition, NewPosition, [], NewBoard),
+  append(CurrentSequence, [NewPosition], NewCurrentSequence),
+  capture_sequence(NewBoard, NewPosition, FromPiece, NewCurrentSequence, FinalSequence).
 
-% Predicate to check if a capture is possible
-% Logic to check if a capture is possible in any diagonal 
+
 can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [2, 2], [1, 1], FromPiece, [ToRow, ToColumn]).
 
@@ -117,10 +119,11 @@ can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [-2, -2], [-1, -1], FromPiece, [ToRow, ToColumn]).
 
 
-% Predicate to find the sequence with the maximum length
-max_sequence([Seq], Seq).
-max_sequence([Seq1, Seq2 | Rest], MaxSeq) :-
-  length(Seq1, Len1),
-  length(Seq2, Len2),
-  ( Len1 > Len2 -> max_sequence([Seq1|Rest], MaxSeq)
-  ; max_sequence([Seq2|Rest], MaxSeq) ).
+max_sequence([Sequence], Sequence).
+max_sequence([Sequence1, Sequence2 | Rest], MaxSequence) :-
+  length(Sequence1, Length1),
+  length(Sequence2, Length2),
+  (Length1 > Length2
+    -> max_sequence([Sequence1 | Rest], MaxSequence)
+    ; max_sequence([Sequence2 | Rest], MaxSequence)
+  ).

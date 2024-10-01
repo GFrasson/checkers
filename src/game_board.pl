@@ -8,7 +8,8 @@
   get_piece_at_position/4,
   promotion_piece/2,
   is_inside_boundaries/2,
-  is_promotion/2
+  is_promotion/2,
+  queen/1
 ]).
 
 :- dynamic(board/1).
@@ -19,6 +20,10 @@ piece(b).
 piece(rq).
 piece(bq).
 piece(e).
+
+
+queen(rq).
+queen(bq).
 
 
 promotion_piece(r, rq).
@@ -54,16 +59,16 @@ initialize_board :-
 % ]).
 
 
-initial_board([
-  [e, e, e, e, e, e, e, e],
-  [e, e, r, e, e, e, e, e],
-  [e, rq, e, r, e, e, e, e],
-  [e, e, e, e, e, e, e, e],
-  [e, e, e, e, e, bq, e, e],
-  [e, e, e, e, b, e, e, e],
-  [e, e, e, e, e, e, e, e],
-  [e, e, e, e, e, e, e, e]
-]).
+% initial_board([
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, r, e, e, e, e, e],
+%   [e, rq, e, r, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, bq, e, e],
+%   [e, e, e, e, b, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e]
+% ]).
 
 
 % initial_board([
@@ -76,6 +81,18 @@ initial_board([
 %   [e, e, e, e, e, e, e, e],
 %   [e, e, e, e, e, e, e, e]
 % ]).
+
+
+initial_board([
+  [e, e, e, e, e, e, e, e],
+  [e, e, e, e, rq, e, rq, e],
+  [e, rq, e, r, e, e, e, e],
+  [e, e, e, e, e, e, e, e],
+  [e, r, e, r, e, r, e, e],
+  [e, e, e, e, bq, e, b, e],
+  [e, e, e, e, e, e, e, e],
+  [e, e, e, e, e, e, e, e]
+]).
 
 
 is_inside_boundaries(Row, Column) :-

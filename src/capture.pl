@@ -10,10 +10,23 @@
 cap(_, []).
 cap(COORD1, [COORD2 | COORDS]) :-
   board(Board),
-  % longest_capture_sequence(COORD1, LongestSequence),
-  % length(LongestSequence, LengthLongestSequence),
-  % length([COORD2 | COORDS], LengthCapture),
-  % LengthCapture =:= LengthLongestSequence,
+  coord_to_position(COORD1, FromRow, FromColumn),
+  get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
+  \+ queen(FromPiece),
+  longest_capture_sequence(COORD1, LongestSequence),
+  length(LongestSequence, LengthLongestSequence),
+  length([COORD2 | COORDS], LengthCapture),
+  LengthCapture =:= LengthLongestSequence,
+  make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
+  retractall(board(_)),
+  assertz(board(NewBoard)),
+  update_state().
+
+cap(COORD1, [COORD2 | COORDS]) :-
+  board(Board),
+  coord_to_position(COORD1, FromRow, FromColumn),
+  get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
+  queen(FromPiece),
   make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
   retractall(board(_)),
   assertz(board(NewBoard)),
@@ -142,15 +155,20 @@ capture_sequence(Board, PiecePosition, FromPiece, CurrentSequence, FinalSequence
 
 
 can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
+  \+ queen(FromPiece),
+  can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]).
+
+
+can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [2, 2], [1, 1], FromPiece, [ToRow, ToColumn]).
 
-can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
+can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [2, -2], [1, -1], FromPiece, [ToRow, ToColumn]).
 
-can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
+can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [-2, 2], [-1, 1], FromPiece, [ToRow, ToColumn]).
 
-can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
+can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [-2, -2], [-1, -1], FromPiece, [ToRow, ToColumn]).
 
 

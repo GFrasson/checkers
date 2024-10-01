@@ -10,10 +10,10 @@
 cap(_, []).
 cap(COORD1, [COORD2 | COORDS]) :-
   board(Board),
-  longest_capture_sequence(COORD1, LongestSequence),
-  length(LongestSequence, LengthLongestSequence),
-  length([COORD2 | COORDS], LengthCapture),
-  LengthCapture =:= LengthLongestSequence,
+  % longest_capture_sequence(COORD1, LongestSequence),
+  % length(LongestSequence, LengthLongestSequence),
+  % length([COORD2 | COORDS], LengthCapture),
+  % LengthCapture =:= LengthLongestSequence,
   make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
   retractall(board(_)),
   assertz(board(NewBoard)),
@@ -49,11 +49,24 @@ is_valid_capture(Board, FromRow, FromColumn, [DeltaToRow, DeltaToColumn], [Delta
   is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, FromPiece, CaptureRow, CaptureColumn).  
 
 
-is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, FromPiece, CaptureRow, CaptureColumn) :-
+is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, r, CaptureRow, CaptureColumn) :-
+  is_valid_capture_normal_piece(Board, FromRow, ToRow, FromColumn, ToColumn, r, CaptureRow, CaptureColumn).
+
+is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, b, CaptureRow, CaptureColumn) :-
+  is_valid_capture_normal_piece(Board, FromRow, ToRow, FromColumn, ToColumn, b, CaptureRow, CaptureColumn).
+
+is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, bq, CaptureRow, CaptureColumn) :-
+  is_valid_capture_queen_piece(Board, FromRow, ToRow, FromColumn, ToColumn, bq, CaptureRow, CaptureColumn).
+
+is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, rq, CaptureRow, CaptureColumn) :-
+  is_valid_capture_queen_piece(Board, FromRow, ToRow, FromColumn, ToColumn, rq, CaptureRow, CaptureColumn).
+  
+
+is_valid_capture_normal_piece(Board, FromRow, ToRow, FromColumn, ToColumn, FromPiece, CaptureRow, CaptureColumn) :- 
   FromRow =\= ToRow,
   FromColumn =\= ToColumn,
   is_inside_boundaries(ToRow, ToColumn),
-  is_valid_capture_for_piece(FromRow, FromColumn, ToRow, ToColumn, FromPiece),
+  is_valid_capture_diagonals(FromRow, FromColumn, ToRow, ToColumn, FromPiece),
   get_next_index_on_same_direction(FromRow, ToRow, CaptureRow),
   get_next_index_on_same_direction(FromColumn, ToColumn, CaptureColumn),
   get_piece_at_position(Board, CaptureRow, CaptureColumn, CapturePiece),
@@ -65,14 +78,36 @@ is_valid_capture(Board, FromRow, ToRow, FromColumn, ToColumn, FromPiece, Capture
   ToPiece == e.
 
 
-is_valid_capture_for_piece(FromRow, FromColumn, ToRow, ToColumn, r) :-
-  is_valid_capture_normal_piece(FromRow, FromColumn, ToRow, ToColumn).
+is_valid_capture_queen_piece(Board, FromRow, ToRow, FromColumn, ToColumn, FromPiece, CaptureRow, CaptureColumn) :-
+  FromRow =\= ToRow,
+  FromColumn =\= ToColumn,
+  is_inside_boundaries(ToRow, ToColumn),
+  X is abs(ToRow - FromRow),
+  Y is abs(ToColumn - FromColumn),
+  X =:= Y,
+  get_next_index_on_same_direction(FromRow, ToRow, NextRow),
+  get_next_index_on_same_direction(FromColumn, ToColumn, NextColumn),
+  \+ is_path_free(NextRow, NextColumn, ToRow, ToColumn),
+  path_free_last_position_checked(CaptureRow, CaptureColumn),
+  get_piece_at_position(Board, CaptureRow, CaptureColumn, CapturePiece),
+  current_player(Player),
+  player_has_piece(Player, FromPiece),
+  \+ player_has_piece(Player, CapturePiece),
+  get_next_index_on_same_direction(CaptureRow, ToRow, NextRow2),
+  get_next_index_on_same_direction(CaptureColumn, ToColumn, NextColumn2),
+  is_path_free(NextRow2, NextColumn2, ToRow, ToColumn),
+  get_piece_at_position(Board, ToRow, ToColumn, ToPiece),
+  ToPiece == e.
 
-is_valid_capture_for_piece(FromRow, FromColumn, ToRow, ToColumn, b) :-
-  is_valid_capture_normal_piece(FromRow, FromColumn, ToRow, ToColumn).
-  
 
-is_valid_capture_normal_piece(FromRow, FromColumn, ToRow, ToColumn) :-
+is_valid_capture_diagonals(FromRow, FromColumn, ToRow, ToColumn, r) :-
+  is_valid_capture_normal_piece_diagonals(FromRow, FromColumn, ToRow, ToColumn).
+
+is_valid_capture_diagonals(FromRow, FromColumn, ToRow, ToColumn, b) :-
+  is_valid_capture_normal_piece_diagonals(FromRow, FromColumn, ToRow, ToColumn).
+
+
+is_valid_capture_normal_piece_diagonals(FromRow, FromColumn, ToRow, ToColumn) :-
   is_valid_capture_row_normal_piece(FromRow, ToRow),
   is_valid_capture_column_normal_piece(FromColumn, ToColumn).
 

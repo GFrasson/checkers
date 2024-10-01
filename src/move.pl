@@ -2,7 +2,9 @@
   mv/2,
   display_game_state/0,
   get_next_index_on_same_direction/3,
-  update_state/0
+  update_state/0,
+  is_path_free/4,
+  path_free_last_position_checked/2
 ]).
 
 :- use_module(game_board).
@@ -82,12 +84,19 @@ is_valid_move_queen(FromRow, FromColumn, ToRow, ToColumn) :-
   is_path_free(NextRow, NextColumn, ToRow, ToColumn).
 
 
+:- dynamic(path_free_last_position_checked/2).
+
 is_path_free(FromRow, FromColumn, FromRow, FromColumn) :-
+  retractall(path_free_last_position_checked(_, _)),
+  assertz(path_free_last_position_checked(FromRow, FromColumn)),
   board(Board),
   get_piece_at_position(Board, FromRow, FromColumn, Piece),
   Piece == e.
 
+
 is_path_free(FromRow, FromColumn, ToRow, ToColumn) :-
+  retractall(path_free_last_position_checked(_, _)),
+  assertz(path_free_last_position_checked(FromRow, FromColumn)),
   board(Board),
   get_piece_at_position(Board, FromRow, FromColumn, Piece),
   Piece == e,

@@ -12,7 +12,10 @@ choose_initial_player(Player) :-
 
 
 start_game() :-
-  write('Jogo de Damas!\n'),
+  write('Jogo de Damas!'), nl,
+  write('Para mover uma peça, execute o comando: mv(COORD1, COORD2).'), nl,
+  write('Para capturar uma ou mais peças, execute o comando: cap(COORD1, [COORD2, COORD3,..., COORDN]).'), nl,
+  write('Para executar uma jogada feita pelo computador, execute o comando computer_move().'), nl,
   nl,
   choose_initial_player(Player),
   initialize_current_player(Player),

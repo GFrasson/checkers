@@ -74,7 +74,8 @@ computer_move() :-
       get_element_at_index(BestEvaluation, 3, CaptureCoords),
       cap(CaptureCoord1, CaptureCoords)
     )
-  ).
+  ),
+  !.
 
 
 evaluate_board(Board, Value) :- process_matrix(Board, piece_value, 0, Value).

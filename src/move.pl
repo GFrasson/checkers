@@ -22,7 +22,8 @@ mv(COORD1, COORD2) :-
   make_move(Board, Row1, Column1, Row2, Column2, Player, NewBoard),
   retract(board(Board)),
   assertz(board(NewBoard)),
-  update_state().
+  update_state(),
+  !.
 
 
 make_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, NewBoard) :-

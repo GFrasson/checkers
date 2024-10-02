@@ -25,6 +25,10 @@ mv(COORD1, COORD2) :-
   update_state(),
   !.
 
+mv(_, _) :-
+  write('Movimento inválido'), nl,
+  write('Digite uma nova ação:'),
+  !.
 
 make_move(Board, FromRow, FromColumn, ToRow, ToColumn, Player, NewBoard) :-
   get_piece_at_position(Board, FromRow, FromColumn, FromPiece),

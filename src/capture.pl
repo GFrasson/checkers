@@ -24,6 +24,11 @@ cap(COORD1, [COORD2 | COORDS]) :-
   update_state(capture),
   !.
 
+cap(_, _) :-
+  write('Captura inválida'), nl,
+  write('Digite uma nova ação:'),
+  !.
+
 
 make_capture(Board, _, [], Board).
 make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard) :-  

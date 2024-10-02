@@ -12,12 +12,18 @@
 computer_move() :-
   board(Board),
   current_player(Player),
-  Player == b,
 
-  find_piece_positions(b, BluePiecePositions),
-  find_piece_positions(bq, BlueQueenPiecePositions),
-  % BlueQueenPiecePositions = [],
-  append(BluePiecePositions, BlueQueenPiecePositions, FromPositions),
+  (Player == a -> (
+    NormalPiece = r,
+    QueenPiece = rq
+  ) ; (
+    NormalPiece = b,
+    QueenPiece = bq
+  )),
+
+  find_piece_positions(NormalPiece, ComputerPiecePositions),
+  find_piece_positions(QueenPiece, ComputerQueenPiecePositions),
+  append(ComputerPiecePositions, ComputerQueenPiecePositions, FromPositions),
   
   findall(
     [move, Value, Coord1, Coord2],
@@ -34,9 +40,6 @@ computer_move() :-
     EvaluationsMoves
   ),
 
-  write(EvaluationsMoves), nl,
-
-
   findall(
     [capture, Value, Coord1, Coords],
     (
@@ -45,6 +48,9 @@ computer_move() :-
 
       position_to_coord([FromRow, FromColumn], Coord1),
       maplist(position_to_coord, Sequence, Coords),
+      
+      length(Coords, LengthCoords),
+      LengthCoords > 0,
       
       make_capture(Board, Coord1, Coords, NewBoard),
       evaluate_board(NewBoard, Value)
@@ -55,7 +61,7 @@ computer_move() :-
   append(EvaluationsMoves, EvaluationsCaptures, Evaluations),
 
   sort_matrix_by_column(Evaluations, 1, EvaluationsSorted),
-  get_last_element(EvaluationsSorted, BestEvaluation),
+  get_best_evaluation_action(Player, EvaluationsSorted, BestEvaluation),
 
   get_head(BestEvaluation, ActionType),  
   (ActionType == move
@@ -95,3 +101,8 @@ process_matrix([Row | Tail], CounterFunction, Counter, FinalCounter) :-
   process_row(Row, CounterFunction, Counter, UpdatedCounter),
   process_matrix(Tail, CounterFunction, UpdatedCounter, FinalCounter).
 
+get_best_evaluation_action(a, EvaluationsSorted, BestEvaluation) :-
+  get_head(EvaluationsSorted, BestEvaluation).
+
+get_best_evaluation_action(b, EvaluationsSorted, BestEvaluation) :-
+  get_last_element(EvaluationsSorted, BestEvaluation).

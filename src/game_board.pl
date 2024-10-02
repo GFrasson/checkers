@@ -51,16 +51,16 @@ initialize_board :-
   assertz(board(Board)).
 
 
-% initial_board([
-%   [e, b, e, b, e, b, e, b],
-%   [b, e, b, e, b, e, b, e],
-%   [e, b, e, b, e, b, e, b],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [r, e, r, e, r, e, r, e],
-%   [e, r, e, r, e, r, e, r],
-%   [r, e, r, e, r, e, r, e]
-% ]).
+initial_board([
+  [e, b, e, b, e, b, e, b],
+  [b, e, b, e, b, e, b, e],
+  [e, b, e, b, e, b, e, b],
+  [e, e, e, e, e, e, e, e],
+  [e, e, e, e, e, e, e, e],
+  [r, e, r, e, r, e, r, e],
+  [e, r, e, r, e, r, e, r],
+  [r, e, r, e, r, e, r, e]
+]).
 
 % initial_board([
 %   [e, e, e, e, e, e, e, e],
@@ -98,17 +98,28 @@ initialize_board :-
 % ]).
 
 
-initial_board([
-  [e, e, e, e, e, e, e, e],
-  [e, e, e, e, rq, e, rq, e],
-  [e, rq, e, r, e, e, e, e],
-  [e, e, e, e, e, e, e, e],
-  [e, r, e, r, e, r, e, e],
-  [e, e, e, e, bq, e, b, e],
-  [e, e, e, e, e, e, e, e],
-  [e, e, e, e, e, e, e, e]
-]).
+% initial_board([
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, rq, e, rq, e],
+%   [e, rq, e, r, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, r, e, r, e, r, e, e],
+%   [e, e, e, e, bq, e, b, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e]
+% ]).
 
+
+% initial_board([
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, r, e, rq, e, r, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, b, e, bq, e, b, e],
+%   [e, e, e, e, e, e, e, e],
+%   [e, e, e, e, e, e, e, e]
+% ]).
 
 is_inside_boundaries(Row, Column) :-
   Row >= 0,

@@ -1,10 +1,13 @@
 :- module(capture, [
-  cap/2
+  cap/2,
+  longest_capture_sequence/3,
+  make_capture/4
 ]).
 
 :- use_module(game_board).
 :- use_module(player).
 :- use_module(move).
+:- use_module(utils).
 
 
 cap(_, []).
@@ -13,7 +16,7 @@ cap(COORD1, [COORD2 | COORDS]) :-
   coord_to_position(COORD1, FromRow, FromColumn),
   get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
   \+ queen(FromPiece),
-  longest_capture_sequence(COORD1, LongestSequence),
+  longest_capture_sequence_coord(COORD1, LongestSequence),
   length(LongestSequence, LengthLongestSequence),
   length([COORD2 | COORDS], LengthCapture),
   LengthCapture =:= LengthLongestSequence,
@@ -34,7 +37,7 @@ cap(COORD1, [COORD2 | COORDS]) :-
 
 
 make_capture(Board, _, [], Board).
-make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard) :-
+make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard) :-  
   coord_to_position(COORD1, FromRow, FromColumn),
   coord_to_position(COORD2, ToRow, ToColumn),
   make_single_capture(Board, [FromRow, FromColumn], [ToRow, ToColumn], COORDS, NewBoardUpdated),
@@ -133,11 +136,12 @@ is_valid_capture_column_normal_piece(FromColumn, ToColumn) :- ToColumn =:= FromC
 is_valid_capture_column_normal_piece(FromColumn, ToColumn) :- ToColumn =:= FromColumn + 2.
 
 
-is_empty_list([]).
-
-
-longest_capture_sequence(FromCoord, Sequence) :-
+longest_capture_sequence_coord(FromCoord, Sequence) :-
   coord_to_position(FromCoord, FromRow, FromColumn),
+  longest_capture_sequence(FromRow, FromColumn, Sequence).
+
+
+longest_capture_sequence(FromRow, FromColumn, Sequence) :- 
   board(Board),
   get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
   findall(Captures, capture_sequence(Board, [FromRow, FromColumn], FromPiece, [], Captures), AllSequences),
@@ -170,13 +174,3 @@ can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColu
 
 can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [-2, -2], [-1, -1], FromPiece, [ToRow, ToColumn]).
-
-
-max_sequence([Sequence], Sequence).
-max_sequence([Sequence1, Sequence2 | Rest], MaxSequence) :-
-  length(Sequence1, Length1),
-  length(Sequence2, Length2),
-  (Length1 > Length2
-    -> max_sequence([Sequence1 | Rest], MaxSequence)
-    ; max_sequence([Sequence2 | Rest], MaxSequence)
-  ).

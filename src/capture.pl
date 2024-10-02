@@ -13,23 +13,10 @@
 cap(_, []).
 cap(COORD1, [COORD2 | COORDS]) :-
   board(Board),
-  coord_to_position(COORD1, FromRow, FromColumn),
-  get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
-  \+ queen(FromPiece),
   longest_capture_sequence_coord(COORD1, LongestSequence),
   length(LongestSequence, LengthLongestSequence),
   length([COORD2 | COORDS], LengthCapture),
   LengthCapture =:= LengthLongestSequence,
-  make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
-  retractall(board(_)),
-  assertz(board(NewBoard)),
-  update_state().
-
-cap(COORD1, [COORD2 | COORDS]) :-
-  board(Board),
-  coord_to_position(COORD1, FromRow, FromColumn),
-  get_piece_at_position(Board, FromRow, FromColumn, FromPiece),
-  queen(FromPiece),
   make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
   retractall(board(_)),
   assertz(board(NewBoard)),
@@ -159,8 +146,10 @@ capture_sequence(Board, PiecePosition, FromPiece, CurrentSequence, FinalSequence
 
 
 can_capture(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
-  \+ queen(FromPiece),
-  can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]).
+(queen(FromPiece)
+  -> can_capture_queen(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn])
+  ; can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn])
+).
 
 
 can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
@@ -174,3 +163,35 @@ can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColu
 
 can_capture_normal_piece(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
   is_valid_capture(Board, FromRow, FromColumn, [-2, -2], [-1, -1], FromPiece, [ToRow, ToColumn]).
+
+
+can_capture_queen(Board, [FromRow, FromColumn], FromPiece, [ToRow, ToColumn]) :-
+  (
+    check_queen_diagonal(Board, [FromRow, FromColumn], FromPiece, 1, 1, [ToRow, ToColumn]) ;
+    check_queen_diagonal(Board, [FromRow, FromColumn], FromPiece, 1, -1, [ToRow, ToColumn]) ;
+    check_queen_diagonal(Board, [FromRow, FromColumn], FromPiece, -1, 1, [ToRow, ToColumn]) ;
+    check_queen_diagonal(Board, [FromRow, FromColumn], FromPiece, -1, -1, [ToRow, ToColumn])
+  ).
+
+
+check_queen_diagonal(Board, [FromRow, FromColumn], FromPiece, RowStep, ColStep, [ToRow, ToColumn]) :-
+  NextRow is FromRow + RowStep,
+  NextCol is FromColumn + ColStep,
+
+  is_inside_boundaries(NextRow, NextCol),
+  get_piece_at_position(Board, NextRow, NextCol, Piece),
+
+  (Piece == e
+    -> check_queen_diagonal(Board, [NextRow, NextCol], FromPiece, RowStep, ColStep, [ToRow, ToColumn])
+    ; 
+    NextCaptureRow is NextRow + RowStep,
+    NextCaptureCol is NextCol + ColStep,
+    is_inside_boundaries(NextCaptureRow, NextCaptureCol),
+    get_piece_at_position(Board, NextRow, NextCol, OpponentPiece),
+    current_player(Player),
+    \+ player_has_piece(Player, OpponentPiece),
+    get_piece_at_position(Board, NextCaptureRow, NextCaptureCol, Piece2),
+    Piece2 == e,
+    ToRow = NextCaptureRow,
+    ToColumn = NextCaptureCol
+  ).

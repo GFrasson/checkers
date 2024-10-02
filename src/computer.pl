@@ -15,8 +15,8 @@ computer_move() :-
   Player == b,
 
   find_piece_positions(b, BluePiecePositions),
-  % find_piece_positions(bq, BlueQueenPiecePositions),
-  BlueQueenPiecePositions = [],
+  find_piece_positions(bq, BlueQueenPiecePositions),
+  % BlueQueenPiecePositions = [],
   append(BluePiecePositions, BlueQueenPiecePositions, FromPositions),
   
   findall(

@@ -62,64 +62,6 @@ initial_board([
   [r, e, r, e, r, e, r, e]
 ]).
 
-% initial_board([
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, rq, e, e, e, e, e],
-%   [e, e, e, e, e, bq, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e]
-% ]).
-
-
-% initial_board([
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, r, e, e, e, e, e],
-%   [e, rq, e, r, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, bq, e, e],
-%   [e, e, e, e, b, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e]
-% ]).
-
-
-% initial_board([
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, b, e, e, e],
-%   [e, e, e, r, e, e, e, e],
-%   [e, e, b, e, e, e, e, e],
-%   [e, r, e, r, e, r, e, e],
-%   [e, e, e, e, b, e, b, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e]
-% ]).
-
-
-% initial_board([
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, rq, e, rq, e],
-%   [e, rq, e, r, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, r, e, r, e, r, e, e],
-%   [e, e, e, e, bq, e, b, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e]
-% ]).
-
-
-% initial_board([
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, r, e, rq, e, r, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, b, e, bq, e, b, e],
-%   [e, e, e, e, e, e, e, e],
-%   [e, e, e, e, e, e, e, e]
-% ]).
 
 is_inside_boundaries(Row, Column) :-
   Row >= 0,

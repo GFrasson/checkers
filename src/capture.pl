@@ -8,6 +8,7 @@
 :- use_module(player).
 :- use_module(move).
 :- use_module(utils).
+:- use_module(state).
 
 
 cap(_, []).
@@ -20,7 +21,7 @@ cap(COORD1, [COORD2 | COORDS]) :-
   make_capture(Board, COORD1, [COORD2 | COORDS], NewBoard),
   retractall(board(_)),
   assertz(board(NewBoard)),
-  update_state().
+  update_state(capture).
 
 
 make_capture(Board, _, [], Board).

@@ -2,7 +2,6 @@
   mv/2,
   display_game_state/0,
   get_next_index_on_same_direction/3,
-  update_state/0,
   is_path_free/4,
   path_free_last_position_checked/2,
   get_all_valid_moves/4,

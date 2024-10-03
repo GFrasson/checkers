@@ -1,3 +1,7 @@
+% Autores
+% Gabriel Frasson Costa - 202035001
+% Pedro do Couto Filgueiras - 201935015
+
 :- use_module(game_board).
 :- use_module(player).
 :- use_module(move).

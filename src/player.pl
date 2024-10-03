@@ -1,3 +1,7 @@
+% Autores
+% Gabriel Frasson Costa - 202035001
+% Pedro do Couto Filgueiras - 201935015
+
 :- module(player, [
   player/1,
   change_current_player/0,

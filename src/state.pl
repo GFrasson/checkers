@@ -1,3 +1,7 @@
+% Autores
+% Gabriel Frasson Costa - 202035001
+% Pedro do Couto Filgueiras - 201935015
+
 :- module(state, [
   display_game_state/0,
   update_state/0,
